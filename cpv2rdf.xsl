@@ -58,7 +58,6 @@
                     <dcterms:source rdf:resource="http://simap.europa.eu/news/new-cpv/cpv_2008_xml.zip"/>
                     <dcterms:title xml:lang="en">Common Procurement Vocabulary 2008</dcterms:title>
                     <dcterms:description xml:lang="en">Common Procurement Vocabulary 2008 converted to RDF</dcterms:description>
-                    <dcterms:publisher rdf:resource="http://keg.vse.cz/resource/person/jindrich-mynarz"/>
                     <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#date">
                         <xsl:value-of select="format-date(current-date(), '[Y0001]-[M01]-[D01]')"/>
                     </dcterms:modified>
