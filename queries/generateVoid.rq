@@ -1,0 +1,34 @@
+PREFIX void: <http://rdfs.org/ns/void#>
+
+CONSTRUCT {
+  <http://ld.opendata.cz/resource/dataset/cpv-2008> void:uriSpace "http://ld.opendata.cz/resource/" ;
+    void:vocabulary <http://purl.org/dc/terms/> ,
+      <http://www.w3.org/2004/02/skos/core#> ;
+    void:classes ?classes ;
+    void:entities ?entities ;
+    void:distinctSubjects ?distinctSubjects ;
+    void:properties ?properties ;
+    void:distinctObjects ?distinctObjects ;
+    void:triples ?triples .
+}
+WHERE {
+  {
+    SELECT (COUNT(DISTINCT ?class) AS ?classes)
+    WHERE {
+      [] a ?class .
+    }
+  }
+  {
+    SELECT (COUNT(DISTINCT ?entity) AS ?entities)
+    WHERE {
+      ?entity ?p ?o .
+      FILTER (!isBlank(?entity))
+    }
+  }
+  {
+    SELECT (COUNT(DISTINCT ?s) AS ?distinctSubjects) (COUNT(DISTINCT ?p) AS ?properties) (COUNT(DISTINCT ?o) AS ?distinctObjects) (COUNT(*) AS ?triples)
+    WHERE {
+      ?s ?p ?o .
+    }
+  }
+}

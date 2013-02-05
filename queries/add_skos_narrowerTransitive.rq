@@ -1,0 +1,8 @@
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT {
+  ?broaderConcept skos:narrowerTransitive ?narrowerConcept .
+}
+WHERE {
+  ?narrowerConcept skos:broaderTransitive ?broaderConcept .
+}
