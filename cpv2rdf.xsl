@@ -64,7 +64,7 @@
                     <dcterms:publisher rdf:resource="http://opendata.cz"/>
                     <dcterms:license rdf:resource="http://opendatacommons.org/licenses/pddl/1-0"/>
                     <void:rootResource rdf:resource="{$cpvScheme}"/>
-                    <void:exampleResource rdfs:resource="{concat($cpvNamespace, 'concept/', '18317000')}"/>
+                    <void:exampleResource rdf:resource="{concat($cpvNamespace, 'concept/', '18317000')}"/>
                 </void:Dataset>
             </rdf:RDF>
         </xsl:result-document>
