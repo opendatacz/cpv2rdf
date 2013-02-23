@@ -111,7 +111,7 @@
     
     <xsl:template name="padBroader"> 
         <!-- Adapted from:
-            http://weso.googlecode.com/hg-history/811a741894f9f61826120a42c2823aa5cffd8f5a/trunk/projects/10ders/pscs/cpv/2008/generate-cpv.py
+          https://weso.googlecode.com/hg/trunk/projects/10ders/pscs/cpv/2008/generate-cpv.py
         -->
         <xsl:param name="meaningfulDigitsBroader"/>
         <xsl:choose>
