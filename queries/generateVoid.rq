@@ -1,7 +1,7 @@
 PREFIX void: <http://rdfs.org/ns/void#>
 
 CONSTRUCT {
-  <http://ld.opendata.cz/resource/dataset/cpv-2008> void:uriSpace "http://ld.opendata.cz/resource/" ;
+  <http://linked.opendata.cz/resource/dataset/cpv-2008> void:uriSpace "http://linked.opendata.cz/resource/" ;
     void:vocabulary <http://purl.org/dc/terms/> ,
       <http://www.w3.org/2004/02/skos/core#> ;
     void:classes ?classes ;

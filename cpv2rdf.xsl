@@ -6,7 +6,7 @@
     xmlns:void="http://rdfs.org/ns/void#"
     version="2.0">
     
-    <xsl:param name="namespace" select="'http://ld.opendata.cz/resource/'"/>
+    <xsl:param name="namespace" select="'http://linked.opendata.cz/resource/'"/>
     <xsl:variable name="cpvNamespace" select="concat($namespace, 'cpv-2008/')"/>
     <xsl:variable name="cpvScheme" select="concat($namespace, 'concept-scheme/', 'cpv-2008')"/>
     <xsl:variable name="cpvMetadataNamespace" select="concat($namespace, 'dataset/cpv-2008')"/>
