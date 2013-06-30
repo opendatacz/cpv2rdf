@@ -93,17 +93,26 @@
     
     <xsl:template name="getBroader">
         <xsl:param name="code"/>
-        <xsl:variable name="meaningfulDigits">
-            <xsl:call-template name="rstripZero">
-                <xsl:with-param name="text" select="$code"/>
-            </xsl:call-template>
-        </xsl:variable>
-        <xsl:variable name="meaningfulDigitsLength" select="string-length($meaningfulDigits)"/>
+        <xsl:variable name="meaningfulDigits" select="replace($code, '0+$', '')"/>
         <xsl:choose>
-            <xsl:when test="$meaningfulDigitsLength &gt; 2">
-                <xsl:call-template name="padBroader">
-                    <xsl:with-param name="meaningfulDigitsBroader" select="substring($meaningfulDigits, 0, $meaningfulDigitsLength)"/>
-                </xsl:call-template>
+            <xsl:when test="string-length($meaningfulDigits) &gt; 2">
+                <xsl:variable name="paddedBroader">
+                    <xsl:call-template name="padBroader">
+                        <xsl:with-param name="meaningfulDigitsBroader" select="replace($meaningfulDigits, '\d$', '')"/>
+                    </xsl:call-template>
+                </xsl:variable>
+                <xsl:choose>
+                    <!-- Test if a broader concept exists -->
+                    <xsl:when test="boolean(key('cpvCode', $paddedBroader))">
+                        <skos:broaderTransitive rdf:resource="{concat($cpvNamespace, 'concept/', $paddedBroader)}"/>
+                    </xsl:when>
+                    <!-- Remove 1 meaningful digit to find more broader concept -->
+                    <xsl:otherwise>
+                        <xsl:call-template name="getBroader">
+                            <xsl:with-param name="code" select="replace($paddedBroader, '\d0+$', '')"/>
+                        </xsl:call-template>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:when>
             <xsl:otherwise>
                <skos:topConceptOf rdf:resource="{$cpvScheme}"/>
@@ -111,10 +120,7 @@
         </xsl:choose>
     </xsl:template>
     
-    <xsl:template name="padBroader"> 
-        <!-- Adapted from:
-          https://weso.googlecode.com/hg/trunk/projects/10ders/pscs/cpv/2008/generate-cpv.py
-        -->
+    <xsl:template name="padBroader">
         <xsl:param name="meaningfulDigitsBroader"/>
         <xsl:choose>
             <xsl:when test="string-length($meaningfulDigitsBroader) &lt; 8">
@@ -122,30 +128,8 @@
                     <xsl:with-param name="meaningfulDigitsBroader" select="concat($meaningfulDigitsBroader, '0')"/>
                 </xsl:call-template>
             </xsl:when>
-            <!-- Test if a broader concept exists -->
-            <xsl:when test="key('cpvCode', $meaningfulDigitsBroader)">
-                <skos:broaderTransitive rdf:resource="{concat($cpvNamespace, 'concept/', $meaningfulDigitsBroader)}"/>
-            </xsl:when>
-            <!-- Remove 1 meaningful digit to find more broader concept -->
             <xsl:otherwise>
-                <xsl:call-template name="padBroader">
-                    <xsl:with-param name="meaningfulDigitsBroader" select="replace($meaningfulDigitsBroader, '\d0+$', '')"/>
-                </xsl:call-template>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:template>
-    
-    <xsl:template name="rstripZero">
-        <xsl:param name="text"/>
-        <xsl:variable name="textLength" select="string-length($text)"/>
-        <xsl:choose>
-            <xsl:when test="substring($text, $textLength) = '0'">
-                <xsl:call-template name="rstripZero">
-                    <xsl:with-param name="text" select="replace($text, '0$', '')"/>
-                </xsl:call-template>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="$text"/>
+                <xsl:value-of select="$meaningfulDigitsBroader"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
