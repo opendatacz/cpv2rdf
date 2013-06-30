@@ -25,8 +25,7 @@ unzip -d temp cpv_2008_xml.zip
 rm cpv_2008_xml.zip
 
 notify "Executing XSL transformations..."
-#saxon -s:temp/cpv_2008.xml -xsl:cpv2rdf.xsl
-java -Xmx1024m -jar /usr/local/Cellar/saxon/9.4.0.7/libexec/saxon9he.jar -s:temp/cpv_2008.xml -xsl:cpv2rdf.xsl
+saxon -s:temp/cpv_2008.xml -xsl:cpv2rdf.xsl
 saxon -s:temp/code_cpv_suppl_2008.xml -xsl:cpv2rdf.xsl
 
 notify "Converting data to Turtle..."

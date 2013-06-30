@@ -81,7 +81,9 @@
         <skos:Concept rdf:about="{concat($cpvNamespace, 'concept/', $code)}">
             <skos:notation><xsl:value-of select="$code"/></skos:notation>
             <skos:inScheme rdf:resource="{$schemeNs}"/>
-            <!-- Ignore non-existing broader for supplementary codes -->
+            <!-- Ignore non-existing broader for supplementary codes
+                The hierarchy of supplementary codes is only available in PDF (http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2008:074:0001:0375:EN:PDF).
+            -->
             <xsl:if test="local-name(.) = 'CPV'">
                 <xsl:call-template name="getBroader">
                     <xsl:with-param name="code" select="$code"/>
