@@ -11,6 +11,8 @@
     <xsl:variable name="cpvScheme" select="concat($namespace, 'concept-scheme/', 'cpv-2008')"/>
     <xsl:variable name="cpvMetadataNamespace" select="concat($namespace, 'dataset/cpv-2008')"/>
     
+    <xsl:key name="cpvCode" match="/CPV_CODE/CPV" use="replace(tokenize(@CODE, '-')[1], '0$', '')"/>
+    
     <xsl:output encoding="UTF-8" indent="yes" method="xml"/>
     
     <xsl:template match="CPV_CODE">
@@ -120,8 +122,15 @@
                     <xsl:with-param name="meaningfulDigitsBroader" select="concat($meaningfulDigitsBroader, '0')"/>
                 </xsl:call-template>
             </xsl:when>
-            <xsl:otherwise>
+            <!-- Test if a broader concept exists -->
+            <xsl:when test="key('cpvCode', $meaningfulDigitsBroader)">
                 <skos:broaderTransitive rdf:resource="{concat($cpvNamespace, 'concept/', $meaningfulDigitsBroader)}"/>
+            </xsl:when>
+            <!-- Remove 1 meaningful digit to find more broader concept -->
+            <xsl:otherwise>
+                <xsl:call-template name="padBroader">
+                    <xsl:with-param name="meaningfulDigitsBroader" select="replace($meaningfulDigitsBroader, '\d0+$', '')"/>
+                </xsl:call-template>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
