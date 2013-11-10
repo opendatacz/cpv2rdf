@@ -1,0 +1,13 @@
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT ?orphan
+WHERE {
+  ?orphan a skos:Concept .
+  FILTER NOT EXISTS {
+    {
+      ?orphan skos:topConceptOf [] .
+    } UNION {
+      ?orphan skos:broaderTransitive [] .
+    }
+  }
+}
