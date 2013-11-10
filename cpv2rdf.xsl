@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:f="http://opendata.cz/xslt/functions#"
     xmlns:dcterms="http://purl.org/dc/terms/"
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
@@ -11,7 +12,29 @@
     <xsl:variable name="cpvScheme" select="concat($namespace, 'concept-scheme/', 'cpv-2008')"/>
     <xsl:variable name="cpvMetadataNamespace" select="concat($namespace, 'dataset/cpv-2008')"/>
     
-    <xsl:key name="cpvCode" match="/CPV_CODE/CPV" use="replace(tokenize(@CODE, '-')[1], '0$', '')"/>
+    <xsl:function name="f:padZeroes">
+        <xsl:param name="code"/>
+        <xsl:choose>
+            <xsl:when test="string-length($code) &lt; 8">
+                <xsl:value-of select="f:padZeroes(concat($code, '0'))"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$code"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+    
+    <xsl:function name="f:removeCheckDigit">
+        <xsl:param name="code"/>
+        <xsl:value-of select="tokenize($code, '-')[1]"/>
+    </xsl:function>
+    
+    <xsl:function name="f:rstripZeroes">
+        <xsl:param name="code"/>
+        <xsl:value-of select="replace($code, '0+$', '')"/>
+    </xsl:function>
+    
+    <xsl:key name="cpvCode" match="/CPV_CODE/CPV" use="f:removeCheckDigit(@CODE)"/>
     
     <xsl:output encoding="UTF-8" indent="yes" method="xml"/>
     
@@ -76,7 +99,7 @@
         <xsl:param name="schemeNs"/>
         
         <!-- Remove check digit -->
-        <xsl:variable name="code" select="tokenize(@CODE, '-')[1]"/>
+        <xsl:variable name="code" select="f:removeCheckDigit(@CODE)"/>
         
         <skos:Concept rdf:about="{concat($cpvNamespace, 'concept/', $code)}">
             <skos:notation><xsl:value-of select="$code"/></skos:notation>
@@ -85,7 +108,7 @@
                 The hierarchy of supplementary codes is only available in PDF (http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2008:074:0001:0375:EN:PDF).
             -->
             <xsl:if test="local-name(.) = 'CPV'">
-                <xsl:call-template name="getBroader">
+                <xsl:call-template name="getParent">
                     <xsl:with-param name="code" select="$code"/>
                 </xsl:call-template>
             </xsl:if>
@@ -94,44 +117,36 @@
     </xsl:template>
     
     <xsl:template name="getBroader">
-        <xsl:param name="code"/>
-        <xsl:variable name="meaningfulDigits" select="replace($code, '0+$', '')"/>
-        <xsl:choose>
-            <xsl:when test="string-length($meaningfulDigits) &gt; 2">
-                <xsl:variable name="paddedBroader">
-                    <xsl:call-template name="padBroader">
-                        <xsl:with-param name="meaningfulDigitsBroader" select="replace($meaningfulDigits, '\d$', '')"/>
+        <xsl:param name="meaningfulDigits"/>
+        <xsl:if test="string-length($meaningfulDigits) &gt; 2">
+            <!-- Remove 1 meaningful digit to find more broader concept -->
+            <xsl:variable name="meaningfulDigitsBroader" select="replace($meaningfulDigits, '\d$', '')"/>
+            <xsl:variable name="paddedBroader" select="f:padZeroes($meaningfulDigitsBroader)"/>
+            <xsl:choose>
+                <!-- Test if a broader concept exists -->
+                <xsl:when test="boolean(key('cpvCode', $paddedBroader))">
+                    <skos:broaderTransitive rdf:resource="{concat($cpvNamespace, 'concept/', $paddedBroader)}"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:call-template name="getBroader">
+                        <xsl:with-param name="meaningfulDigits" select="$meaningfulDigitsBroader"/>
                     </xsl:call-template>
-                </xsl:variable>
-                <xsl:choose>
-                    <!-- Test if a broader concept exists -->
-                    <xsl:when test="boolean(key('cpvCode', $paddedBroader))">
-                        <skos:broaderTransitive rdf:resource="{concat($cpvNamespace, 'concept/', $paddedBroader)}"/>
-                    </xsl:when>
-                    <!-- Remove 1 meaningful digit to find more broader concept -->
-                    <xsl:otherwise>
-                        <xsl:call-template name="getBroader">
-                            <xsl:with-param name="code" select="replace($paddedBroader, '\d0+$', '')"/>
-                        </xsl:call-template>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:when>
-            <xsl:otherwise>
-               <skos:topConceptOf rdf:resource="{$cpvScheme}"/>
-            </xsl:otherwise>
-        </xsl:choose>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:if>
     </xsl:template>
     
-    <xsl:template name="padBroader">
-        <xsl:param name="meaningfulDigitsBroader"/>
+    <xsl:template name="getParent">
+        <xsl:param name="code"/>
+        <xsl:variable name="meaningfulDigits" select="f:rstripZeroes($code)"/>
         <xsl:choose>
-            <xsl:when test="string-length($meaningfulDigitsBroader) &lt; 8">
-                <xsl:call-template name="padBroader">
-                    <xsl:with-param name="meaningfulDigitsBroader" select="concat($meaningfulDigitsBroader, '0')"/>
+            <xsl:when test="string-length($meaningfulDigits) &gt; 2">
+                <xsl:call-template name="getBroader">
+                    <xsl:with-param name="meaningfulDigits" select="$meaningfulDigits"/>
                 </xsl:call-template>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="$meaningfulDigitsBroader"/>
+               <skos:topConceptOf rdf:resource="{$cpvScheme}"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
