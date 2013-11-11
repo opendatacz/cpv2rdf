@@ -82,14 +82,18 @@
                     <rdf:type rdf:resource="http://www.w3.org/ns/prov#Entity"/>
                     <dcterms:source rdf:resource="http://simap.europa.eu/news/new-cpv/cpv_2008_xml.zip"/>
                     <dcterms:title xml:lang="en">Common Procurement Vocabulary 2008</dcterms:title>
+                    <dcterms:title xml:lang="cs">Slovník CPV 2008 - Common Procurement Vocabulary 2008</dcterms:title>
                     <dcterms:description xml:lang="en">Common Procurement Vocabulary 2008 converted to RDF</dcterms:description>
+                    <dcterms:description xml:lang="cs">Slovník CPV 2008 - Common Procurement Vocabulary 2008 - převedený do RDF</dcterms:description>
                     <dcterms:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#date">
                         <xsl:value-of select="format-date(current-date(), '[Y0001]-[M01]-[D01]')"/>
                     </dcterms:modified>
                     <dcterms:publisher rdf:resource="http://opendata.cz"/>
                     <dcterms:license rdf:resource="http://opendatacommons.org/licenses/pddl/1-0"/>
-                    <void:rootResource rdf:resource="{$cpvScheme}"/>
+                    <void:dataDump rdf:resource="http://linked.opendata.cz/dump/cpv2008-opendata-cz.zip"/>
                     <void:exampleResource rdf:resource="{concat($cpvNamespace, 'concept/', '18317000')}"/>
+                    <void:rootResource rdf:resource="{$cpvScheme}"/>
+                    <void:sparqlEndpoint rdf:resource="http://linked.opendata.cz/sparql"/>
                 </void:Dataset>
             </rdf:RDF>
         </xsl:result-document>
