@@ -35,9 +35,15 @@ rapper -i rdfxml -o turtle temp/cpv-2008-metadata.xml > temp/cpv-2008-metadata.t
 
 notify "Generating additional data..."
 arq --data temp/cpv-2008.ttl --query queries/add_skos_narrowerTransitive.rq > temp/skos_narrowerTransitive_links.ttl
+arq --data temp/cpv-2008.ttl --query queries/add_skos_hasTopConcept.rq > temp/skos_hasTopConcept_links.ttl
+arq --data temp/cpv-2008-supplement.ttl --query queries/add_skos_hasTopConcept.rq \
+  > temp/skos_hasTopConcept_links_supplement.ttl
 
 notify "Merging data..."
-cat temp/cpv-2008.ttl temp/cpv-2008-supplement.ttl temp/skos_narrowerTransitive_links.ttl > temp/whole-cpv-2008.ttl
+cat temp/cpv-2008.ttl temp/cpv-2008-supplement.ttl \
+  temp/skos_narrowerTransitive_links.ttl \
+  temp/skos_hasTopConcept_links.ttl temp/skos_hasTopConcept_links_supplement.ttl \
+  > temp/whole-cpv-2008.ttl
 
 notify "Calculating data statistics..."
 arq --data temp/whole-cpv-2008.ttl --query queries/generateVoid.rq > temp/void.ttl

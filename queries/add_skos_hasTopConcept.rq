@@ -1,0 +1,8 @@
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT {
+  ?conceptScheme skos:hasTopConcept ?topConcept .
+}
+WHERE {
+  ?topConcept skos:topConceptOf ?conceptScheme .
+}
