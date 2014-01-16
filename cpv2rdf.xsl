@@ -111,11 +111,16 @@
             <!-- Ignore non-existing broader for supplementary codes
                 The hierarchy of supplementary codes is only available in PDF (http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2008:074:0001:0375:EN:PDF).
             -->
-            <xsl:if test="local-name(.) = 'CPV'">
-                <xsl:call-template name="getParent">
-                    <xsl:with-param name="code" select="$code"/>
-                </xsl:call-template>
-            </xsl:if>
+            <xsl:choose>
+                <xsl:when test="local-name(.) = 'CPV'">
+                    <xsl:call-template name="getParent">
+                        <xsl:with-param name="code" select="$code"/>
+                    </xsl:call-template>
+                </xsl:when>
+                <xsl:otherwise>
+                    <skos:topConceptOf rdf:resource="{$schemeNs}"/>
+                </xsl:otherwise>
+            </xsl:choose>
             <xsl:apply-templates/>
         </skos:Concept>
     </xsl:template>
