@@ -1,0 +1,27 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix f: <http://opendata.cz/xslt/functions#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<http://linked.opendata.cz/resource/dataset/cpv-2008>
+    dcterms:description "Common Procurement Vocabulary 2008 converted to RDF"@en, "Slovník CPV 2008 - Common Procurement Vocabulary 2008 - převedený do RDF"@cs ;
+    dcterms:license <http://opendatacommons.org/licenses/pddl/1-0> ;
+    dcterms:modified "2015-04-27"^^<http://www.w3.org/2001/XMLSchema#date> ;
+    dcterms:publisher <http://opendata.cz> ;
+    dcterms:source <http://simap.europa.eu/news/new-cpv/cpv_2008_xml.zip> ;
+    dcterms:title "Common Procurement Vocabulary 2008"@en, "Slovník CPV 2008 - Common Procurement Vocabulary 2008"@cs ;
+    void:classes 2 ;
+    void:dataDump <http://linked.opendata.cz/dump/cpv2008-opendata-cz.zip> ;
+    void:distinctObjects 257264 ;
+    void:distinctSubjects 10359 ;
+    void:entities 10359 ;
+    void:exampleResource <http://linked.opendata.cz/resource/cpv-2008/concept/18317000> ;
+    void:properties 10 ;
+    void:rootResource <http://linked.opendata.cz/resource/concept-scheme/cpv-2008> ;
+    void:sparqlEndpoint <http://linked.opendata.cz/sparql> ;
+    void:triples 290002 ;
+    void:uriSpace "http://linked.opendata.cz/resource/" ;
+    void:vocabulary <http://purl.org/dc/terms/>, <http://www.w3.org/2004/02/skos/core#> ;
+    a void:Dataset, <http://www.w3.org/ns/prov#Entity> .
+
